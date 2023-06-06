@@ -66,7 +66,7 @@ class AppControl: #白板上的操作
     def launch_app(self, path):
         os.popen(path)
         try:
-            self.icon_wait(m_login, True)
+            self.icon_wait(m_login, True) #判斷w開啟了沒
             ExceptionHandler(msg= f"{path}已成功開啟.", exceptionLevel= "info")
         except:
             ExceptionHandler(msg= f"{path}開啟失敗", exceptionLevel= "critical")
@@ -79,7 +79,7 @@ class AppControl: #白板上的操作
                 process.append(psutil.Process(pid).name())
             return process   
         try:
-            while appName in get_processing():
+            while appName in get_processing(): #強制中指
                 os.system(f"TASKKILL /F /IM {appName} /T")
                 ExceptionHandler(msg = f"{appName}還未關閉", exceptionLevel= "info")
             else:
@@ -87,26 +87,26 @@ class AppControl: #白板上的操作
         except:
             ExceptionHandler(msg = f"{appName}已關閉", exceptionLevel= "info")
 
-    def type_write(self, content):
+    def type_write(self, content): #複製檔名貼上
         time.sleep(1)
         self.ppc.copy(content)
         time.sleep(1)
         self.pgui.hotkey("ctrl", "v")
     
     def is_icon_get(self, icon): #處理匯入出錯時用
-        if self.pgui.locateCenterOnScreen(icon, confidence= 0.9) != None:
+        if self.pgui.locateCenterOnScreen(icon, confidence= 0.9) != None: #用圖片判斷
             return True
         else:
             return False
 
-    def icon_click(self, icon):
+    def icon_click(self, icon): #點擊
         x, y = self.pgui.locateCenterOnScreen(icon, confidence= 0.9)
         self.pgui.moveTo(x, y)
         time.sleep(2)
         self.pgui.click()
         self.pgui.moveTo(50, 50)
     
-    def icon_doubleClick(self, icon):
+    def icon_doubleClick(self, icon): #雙擊
         x, y = self.pgui.locateCenterOnScreen(icon, confidence= 0.9)
         self.pgui.moveTo(x, y)
         time.sleep(2)

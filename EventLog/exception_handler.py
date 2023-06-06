@@ -13,7 +13,7 @@ class ExceptionHandler: #異常處理
         self.record_logs()
         print(msg)
         
-    def level_recognizer(self): 
+    def level_recognizer(self):  #設定問題等級
         if self.exceptionLevel.lower() == "debug": #診斷問題
             self.level = logging.DEBUG
         elif self.exceptionLevel.lower() == "info": #程式正常進行
@@ -25,7 +25,7 @@ class ExceptionHandler: #異常處理
         elif self.exceptionLevel.lower() == "critical": #嚴重錯誤 程式無法執行
             self.level = logging.CRITICAL
             
-    def record_logs(self):
+    def record_logs(self): #記錄問題
         if self.exceptionLevel.lower() == "debug":
             logging.debug(self.msg, exc_info= True)
         elif self.exceptionLevel.lower() == "info":

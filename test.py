@@ -56,11 +56,10 @@ class TestFileConversion:
 
 class StartFileConversion:
     def __init__(self):
-        self.test = TestFileConversion()
         self.currentPage = 1
-        self.test_()
         
     def test_(self):
+        self.test = TestFileConversion()
         isNextPage = True
         self.test.wf.enter_webpage("https://worker.stage.myviewboard.cloud/", "DCC", "DCC")
         while isNextPage:
@@ -89,6 +88,31 @@ class StartFileConversion:
                 isNextPage = False
                 self.test.finish_task()
 
-            
+class TestApporveFileConversion:
+    def __init__(self):
+        self.wf = Web_Flow()
+        self.wbf = Whiteboard_Flow()   
 
-StartFileConversion()
+class ApproveFileConversion:
+    def __init__(self, totalPage):
+        self.test = TestApporveFileConversion()
+        self.start = StartFileConversion()
+        self.totalPage = totalPage
+        self.current_page = 1
+        self.test_2()
+    def test_2(self):
+        isNextPage = True
+        self.test.wf.enter_webpage("https://worker.stage.myviewboard.cloud/", "admin", "12345")
+        while isNextPage:
+            if self.current_page > self.totalPage:
+                break
+            for i in range(len(self.test.wf.element.GetAllTasks)):
+                if self.test.wf.element.States(i) == "Review":
+                    self.test.wf.wc.element_click(self.test.wf.element.SendBtn(i))
+            self.test.wf.turn_page()
+            self.current_page += 1
+            
+            
+a = StartFileConversion()
+a.test_()
+ApproveFileConversion(totalPage= a.currentPage)

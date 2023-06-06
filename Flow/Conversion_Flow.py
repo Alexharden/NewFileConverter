@@ -29,56 +29,57 @@ class GetFiles: #開啟.txt檔案
 
 class Web_Flow: #整個網頁的流程
     def __init__(self):
-        self.driver = WebDriver().Create_Driver()
-        self.wc = WebControl(self.driver)
-        self.element = Elements_FileConversion(self.wc)
-        self.failFiles = GetFiles("./Failed_File/failed_files.txt").Files
-        self.fc = FileControl()
-    def enter_webpage(self, url, acc, pwd):
+        self.driver = WebDriver().Create_Driver() #呼叫創建一個webdriver
+        self.wc = WebControl(self.driver) #用一個變數來存放 webdriver
+        self.element = Elements_FileConversion(self.wc) #將網頁上所有需要用到的元素存入
+        self.failFiles = GetFiles("./Failed_File/failed_files.txt").Files #開啟失敗的檔案的txt檔案 並讀取.Files
+        self.fc = FileControl() #呼叫刪除檔案 創建資料夾 等待檔案下載
+    def enter_webpage(self, url, acc, pwd): #網頁流程 輸入 網址 放大視窗 輸入帳號密碼 點擊登入
         self.wc.enter_target_page(url)
         self.wc.maximize_window()
         self.wc.element_send_keys(self.element.AccField, acc)
         self.wc.element_send_keys(self.element.PwdField, pwd)
         self.wc.element_click(self.element.LoginBtn)
-    def download_file(self, taskIndex):
-        self.wc.maximize_window()
-        self.createTime = self.element.CreateTime(taskIndex)
-        self.fileName = self.element.FileName(taskIndex)
-        if self.createTime+self.fileName in self.failFiles:
+    def download_file(self, taskIndex): #下載檔案
+        self.wc.maximize_window() #放大視窗
+        self.createTime = self.element.CreateTime(taskIndex) #儲存要下載的檔案時間
+        self.fileName = self.element.FileName(taskIndex) #儲存要下載的檔案名稱
+        if self.createTime+self.fileName in self.failFiles:  #如果檔案時間+檔案名稱出現在失敗的txt中
             ExceptionHandler(msg= f"{self.createTime+self.fileName} is failed file.", exceptionLevel= "info")
             raise
         else:
-            if self.element.States(taskIndex) == "Progress" or self.element.States(taskIndex) == "New":
-                self.wc.element_click(self.element.downloadLink(taskIndex))
-                self.fc.file_wait("./Download_File/", get_extension(self.fileName))
-                self.wc.minimize_window()
+            if self.element.States(taskIndex) == "Progress" or self.element.States(taskIndex) == "New": #狀態如果是這兩個 就會往下執行動作
+                self.wc.element_click(self.element.downloadLink(taskIndex)) #點擊下載
+                self.fc.file_wait("./Download_File/", get_extension(self.fileName)) #等待檔案下載完成
+                self.wc.minimize_window() #縮小視窗
             else:
-                ExceptionHandler(msg=f"{self.createTime+self.fileName} is 'Review' Task", exceptionLevel= "info")
+                ExceptionHandler(msg=f"{self.createTime+self.fileName} is 'Review' Task", exceptionLevel= "info")#這邊只是判斷如果檔案是Review 寫進去log較好判斷
                 raise
-    def upload_file(self, taskIndex):
-        self.wc.maximize_window()
-        self.wc.element_send_keys(self.element.UploadBtn(taskIndex), os.path.join(os.path.abspath("./Convert_File/"), os.listdir("./Convert_File/")[0]))
-        while self.element.States(taskIndex) != "Review":
-            pass
-    def turn_page(self):
+    def upload_file(self, taskIndex): #上傳檔案
+        self.wc.maximize_window() #放大視窗
+        self.wc.element_send_keys(self.element.UploadBtn(taskIndex), os.path.join(os.path.abspath("./Convert_File/"), os.listdir("./Convert_File/")[0])) #從這個資料夾抓index[0]的檔案用send keys將檔案上傳
+        while self.element.States(taskIndex) != "Review":#如果檔案=review 跳過這次
+            pass 
+    def turn_page(self): #點擊下一頁
         self.wc.element_click(self.element.nextPageBtn)
         time.sleep(3)
-    def add_error_file(self):
+    def add_error_file(self): #錯誤檔案的建立時間+檔案名稱 寫入失敗的txt
         self.fc.add_failed_file(self.createTime+self.fileName)
     def finish_close_web(self):
-        self.wc.close_webpage()
+        self.wc.close_webpage() #轉檔上傳結束 關閉網頁
         ExceptionHandler(msg= "轉檔上傳流程結束", exceptionLevel= "info")
 
 class Whiteboard_Flow: #白板的流程
     def __init__(self):
-        self.ap = AppControl()
-        self.fc = FileControl()
+        self.ap = AppControl() #白板控制
+        self.fc = FileControl() #呼叫刪除檔案 創建資料夾 等待檔案下載
     def launch_MVBW(self):
-        self.ap.launch_app(r"C:\Program Files\ViewSonic\vBoard\vBoard.exe")
+        self.ap.launch_app(r"C:\Program Files\ViewSonic\vBoard\vBoard.exe") #開啟白板
     def open_magicbox(self):
-        try:
+        try: #True 是東西出現 False 是東西消失
             self.ap.icon_wait(magic_box, True)
             self.ap.icon_click(magic_box)
+            ExceptionHandler(msg= "有點到百寶箱", exceptionLevel="info")
         except:
             ExceptionHandler(msg= "找不到magicbox圖示，無法點擊", exceptionLevel= "critical")
             raise
@@ -86,6 +87,7 @@ class Whiteboard_Flow: #白板的流程
         try:
             self.ap.icon_wait(m_C_Disk, True)
             self.ap.icon_doubleClick(m_C_Disk)
+            ExceptionHandler(msg= "有點到C槽", exceptionLevel="info")
         except:
             ExceptionHandler(msg= "找不到C槽圖示，無法點擊", exceptionLevel= "critical")
             raise
@@ -93,6 +95,7 @@ class Whiteboard_Flow: #白板的流程
         try:
             self.ap.icon_wait(m_fileconverter_folder, True)
             self.ap.icon_doubleClick(m_fileconverter_folder)
+            ExceptionHandler(msg= "有點到FileConverter資料夾", exceptionLevel="info")
         except:
             ExceptionHandler(msg= "找不到FileConverter資料夾圖示，無法點擊", exceptionLevel= "critical")
             raise
@@ -100,6 +103,7 @@ class Whiteboard_Flow: #白板的流程
         try:
             self.ap.icon_wait(m_download_file_folder, True)
             self.ap.icon_doubleClick(m_download_file_folder)
+            ExceptionHandler(msg= "有點到Download", exceptionLevel="info")
         except:
             ExceptionHandler(msg= "找不到Download資料夾圖示，無法點擊", exceptionLevel= "critical")
             raise
@@ -107,6 +111,7 @@ class Whiteboard_Flow: #白板的流程
         try:
             self.ap.icon_wait(m_olf_image, True)
             self.ap.icon_doubleClick(m_olf_image)
+            ExceptionHandler(msg= "有點到下載檔案的圖示", exceptionLevel="info")
         except:
             ExceptionHandler(msg= "找不到欲下載檔案圖示，無法點擊", exceptionLevel= "critical")
             raise
@@ -123,6 +128,7 @@ class Whiteboard_Flow: #白板的流程
             self.ap.icon_wait(magic_tool, False)
             self.ap.icon_wait(select_allpage, True)
             self.ap.icon_click(select_allpage)
+            ExceptionHandler(msg= "有點到所有頁面按鍵", exceptionLevel="info")
         except:
             ExceptionHandler(msg= "找不到選取所有頁面按鍵，無法點擊", exceptionLevel= "critical")
             raise
@@ -130,11 +136,13 @@ class Whiteboard_Flow: #白板的流程
         try:
             self.ap.icon_wait(import_landscape, True)
             self.ap.icon_click(import_landscape)
+            ExceptionHandler(msg= "有點到水平匯入按鍵", exceptionLevel="info")
         except:
             ExceptionHandler(msg= "找不到水平匯入按鍵，無法點擊", exceptionLevel= "critical")
             raise
     def wait_importing(self):
         try:
+            time.sleep(3)
             self.ap.icon_wait(import_landscape, False)
             self.ap.icon_wait(magic_tool, False)
             ExceptionHandler(msg= "匯入成功", exceptionLevel="info")
@@ -143,9 +151,9 @@ class Whiteboard_Flow: #白板的流程
             raise
     def open_page_management(self):
         try:
-            time.sleep(5)
             self.ap.icon_wait(page_menagement_menu, True)
             self.ap.icon_click(page_menagement_menu)
+            ExceptionHandler(msg= "有點到頁面管理圖示", exceptionLevel="info")
         except:
             ExceptionHandler(msg= "找不到頁面管理圖示，無法點擊", exceptionLevel= "critical")
             raise
@@ -153,6 +161,7 @@ class Whiteboard_Flow: #白板的流程
         try:
             self.ap.icon_wait(delete_page, True)
             self.ap.icon_click(delete_page)
+            ExceptionHandler(msg= "有點到刪除頁面圖示", exceptionLevel="info")
         except:
             ExceptionHandler(msg= "找不到刪除頁面圖示，無法點擊", exceptionLevel= "critical")
             raise
@@ -160,6 +169,7 @@ class Whiteboard_Flow: #白板的流程
         try:
             self.ap.icon_wait(confirm_delete, True)
             self.ap.icon_click(confirm_delete)
+            ExceptionHandler(msg= "有點到確認按鍵", exceptionLevel="info")
         except:
             ExceptionHandler(msg= "找不到確認按鍵，無法點擊", exceptionLevel= "critical")
             raise
@@ -167,6 +177,7 @@ class Whiteboard_Flow: #白板的流程
         try:
             self.ap.icon_wait(page1, True)
             self.ap.icon_click(page1)
+            ExceptionHandler(msg= "有點到第一頁頁面管理圖是", exceptionLevel="info")
         except:
             ExceptionHandler(msg= "找不到第一頁頁面管理圖示，無法點擊", exceptionLevel= "critical")
             raise
@@ -174,6 +185,7 @@ class Whiteboard_Flow: #白板的流程
         try:
             self.ap.icon_wait(file_manager, True)
             self.ap.icon_click(file_manager)
+            ExceptionHandler(msg= "有點到檔案管理", exceptionLevel="info")
         except:
             ExceptionHandler(msg= "找不到檔案管理圖示，無法點擊", exceptionLevel= "critical")
             raise
@@ -181,6 +193,7 @@ class Whiteboard_Flow: #白板的流程
         try:
             self.ap.icon_wait(save_as_image, True)
             self.ap.icon_click(save_as_image)
+            ExceptionHandler(msg= "儲存流程 有點到存檔圖示", exceptionLevel="info")
         except:
             ExceptionHandler(msg= "找不到存檔圖示，無法點擊", exceptionLevel= "critical")
             raise
@@ -188,6 +201,7 @@ class Whiteboard_Flow: #白板的流程
         try:
             self.ap.icon_wait(C_Disk, True)
             self.ap.icon_doubleClick(C_Disk)
+            ExceptionHandler(msg= "儲存流程 有點到C槽圖示", exceptionLevel="info")
         except:
             ExceptionHandler(msg= "找不到C槽圖示，無法點擊", exceptionLevel= "critical")
             raise
@@ -195,6 +209,7 @@ class Whiteboard_Flow: #白板的流程
         try:
             self.ap.icon_wait(f_fileconverter_folder, True)
             self.ap.icon_doubleClick(f_fileconverter_folder)
+            ExceptionHandler(msg= "儲存流程 有點到FileConverter", exceptionLevel="info")
         except:
             ExceptionHandler(msg= "找不到FileConverter資料夾圖示，無法點擊", exceptionLevel= "critical")
             raise
@@ -202,6 +217,7 @@ class Whiteboard_Flow: #白板的流程
         try:
             self.ap.icon_wait(f_converted_file_folder, True)
             self.ap.icon_doubleClick(f_converted_file_folder)
+            ExceptionHandler(msg= "儲存流程 有點到Converted", exceptionLevel="info")
         except:
             ExceptionHandler(msg= "找不到Converted資料夾圖示，無法點擊", exceptionLevel= "critical")
             raise
@@ -210,6 +226,7 @@ class Whiteboard_Flow: #白板的流程
             self.ap.icon_wait(rename_olf_file, True)
             self.ap.icon_click(rename_olf_file)
             self.ap.type_write("converted")
+            ExceptionHandler(msg= "儲存流程 有點到輸入檔名欄位", exceptionLevel="info")
         except:
             ExceptionHandler(msg= "找不到輸入檔名欄位，無法點擊", exceptionLevel= "critical")
             raise
@@ -217,16 +234,18 @@ class Whiteboard_Flow: #白板的流程
         try:
             self.ap.icon_wait(f_confirm_save, True)
             self.ap.icon_click(f_confirm_save)
+            ExceptionHandler(msg= "儲存流程 有點到存檔打勾圖示", exceptionLevel="info")
         except:
-            ExceptionHandler(msg= "找不到確認存檔圖示，無法點擊", exceptionLevel= "critical")
+            ExceptionHandler(msg= "找不到確認存檔打勾圖示，無法點擊", exceptionLevel= "critical")
             raise
         
         try:
             self.fc.file_wait("./Convert_File/", ".olf")
+            ExceptionHandler(msg= "檔案儲存成功", exceptionLevel="info")
         except:
             ExceptionHandler(msg= "超時！存檔時間太長", exceptionLevel= "critical")
             raise
-    def finish_close_app(self):
+    def finish_close_app(self): #關閉白板
         self.ap.close_app("vBoard.exe")
             
 # class ConversionFlow:

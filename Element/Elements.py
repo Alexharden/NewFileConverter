@@ -23,7 +23,7 @@ class Elements_FileConversion: #取得元素
     
     def UploadBtn(self, index): return self.wc.subElement_get(self.GetAllTasks[index], ".//p-fileupload//input")[0] #根據索引獲取指定任務的上傳按鈕
 
-    def SendBtn(self, index): return self.wc.subElement_get(self.GetAllTasks[index], ".//p-radiobutton//span")[0] #根據索引獲取指定任務的發送按鈕
+    def SendBtn(self, index): return self.wc.subElement_get(self.GetAllTasks[index], ".//p-radiobutton//span")[0] #根據索引獲取指定任務的批准
     
     @property
     def pages(self): return self.wc.get_elements(f"//span/a[text()]") #獲取所有頁面的元素列表
