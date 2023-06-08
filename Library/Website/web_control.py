@@ -3,6 +3,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from EventLog.exception_handler import ExceptionHandler
+import time
 
 class WebControl(): #python v3.11.x selenium 4.8.x 網頁控制
     
@@ -119,7 +120,7 @@ class WebControl(): #python v3.11.x selenium 4.8.x 網頁控制
         alert.accept()
 
     "特例"
-    def subElement_get(self, subDriver: webdriver.Chrome, element):
+    def subElement_get(self, subDriver: webdriver.Chrome, element): #獲取子元素
         try:
             self.all_page_wait()
             return subDriver.find_elements(By.XPATH, element)

@@ -30,19 +30,18 @@ rename_olf_file = r'./image/rename_olffile.jpg' #重新命名
 f_confirm_save = r'./image/f_confirm_save.jpg' #輸入檔案名稱後的 能不能點擊確認存檔的勾
 save_success = r'./image/save_success.jpg' #判斷 檔案是否存檔完成
 """
+# 圖片下載路徑
 m_login = r'./image/m_login.png' #判斷w是否開啟的圖
 magic_box = r'./image/magicbox.png' #百寶箱的圖
 m_C_Disk = r'./image/m_steelchannel.png' #c槽
-m_fileconverter_folder = r'./image/m_fileconverted.png'  #轉檔資料夾
+m_fileconverter_folder = r'./image/m_fileconvented.png'  #轉檔資料夾
 m_download_file_folder = r'./image/m_downloadfile.png' #下載資料夾
 m_olf_image = r'./image/m_olfimage.png' #olf 檔案的圖
-import_process = r"./image/importprocess.png" #loading圖
 select_allpage = r'./image/selectallpage.png' #選取所有頁面
 checkmark = r'./image/m_checkmark.png' #點所選取所有頁面 會打勾 來判斷是否點到了選取頁面    
 import_landscape = r'./image/importlandscape.png' #水平匯入檔案
 magic_tool = r'./image/m_magic_tool.png' #百寶箱的工具欄 來判斷是否匯入完成
 page_menagement_menu = r'./image/pagemanagementmenu.png' #頁面管理
-error_message = r"./image/importerror.png" #錯誤訊息
 delete_page= r'./image/deletepage.png' #刪除頁面
 confirm_delete = r'./image/confirmyes.png' #確認刪除 是
 page1 = r'./image/page1.png' #判斷是否刪除掉空白第一頁
@@ -57,6 +56,36 @@ f_converted_file_folder = r'./image/f_convertedfile.png' #轉檔資料夾
 rename_olf_file = r'./image/rename_olffile.png' #重新命名
 f_confirm_save = r'./image/f_confirm_save.png' #輸入檔案名稱後的 能不能點擊確認存檔的勾
 save_success = r'./image/save_success.png' #判斷 檔案是否存檔完成
+error_message = r"./image/importerror.png" #錯誤訊息
+
+
+# m_login = r'./image/m_login.png' #判斷w是否開啟的圖
+# magic_box = r'./image/magicbox.png' #百寶箱的圖
+# m_C_Disk = r'./image/m_steelchannel.png' #c槽
+# m_fileconverter_folder = r'./image/m_fileconverted.png'  #轉檔資料夾
+# m_download_file_folder = r'./image/m_downloadfile.png' #下載資料夾
+# m_olf_image = r'./image/m_olfimage.png' #olf 檔案的圖
+# import_process = r"./image/importprocess.png" #loading圖
+# select_allpage = r'./image/selectallpage.png' #選取所有頁面
+# checkmark = r'./image/m_checkmark.png' #點所選取所有頁面 會打勾 來判斷是否點到了選取頁面    
+# import_landscape = r'./image/importlandscape.png' #水平匯入檔案
+# magic_tool = r'./image/m_magic_tool.png' #百寶箱的工具欄 來判斷是否匯入完成
+# page_menagement_menu = r'./image/pagemanagementmenu.png' #頁面管理
+# error_message = r"./image/importerror.png" #錯誤訊息
+# delete_page= r'./image/deletepage.png' #刪除頁面
+# confirm_delete = r'./image/confirmyes.png' #確認刪除 是
+# page1 = r'./image/page1.png' #判斷是否刪除掉空白第一頁
+
+# #存檔路徑
+# file_manager = r'./image/file_manager.png' #文件管理
+# save_as_image = r'./image/saveas.png' #另存新檔
+# C_Disk = r'./image/f_steelchannel.png' #c槽
+
+# f_fileconverter_folder = r'./image/f_fileconverter.png' 
+# f_converted_file_folder = r'./image/f_convertedfile.png' #轉檔資料夾
+# rename_olf_file = r'./image/rename_olffile.png' #重新命名
+# f_confirm_save = r'./image/f_confirm_save.png' #輸入檔案名稱後的 能不能點擊確認存檔的勾
+# save_success = r'./image/save_success.png' #判斷 檔案是否存檔完成
 
 class AppControl: #白板上的操作
     def __init__(self):
@@ -79,7 +108,7 @@ class AppControl: #白板上的操作
                 process.append(psutil.Process(pid).name())
             return process   
         try:
-            while appName in get_processing(): #強制中指
+            while appName in get_processing(): #強制終止
                 os.system(f"TASKKILL /F /IM {appName} /T")
                 ExceptionHandler(msg = f"{appName}還未關閉", exceptionLevel= "info")
             else:

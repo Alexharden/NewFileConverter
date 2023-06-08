@@ -10,6 +10,7 @@ class TestFileConversion:
         self.wbf = Whiteboard_Flow()   
     def start_web_download_flow(self, taskIndex):
         try:
+            self.wf.newfilesname(taskIndex=taskIndex)
             self.wf.download_file(taskIndex= taskIndex)
         except:
             raise
@@ -57,11 +58,11 @@ class TestFileConversion:
 class StartFileConversion:
     def __init__(self):
         self.currentPage = 1
-        
     def test_(self):
         self.test = TestFileConversion()
         isNextPage = True
         self.test.wf.enter_webpage("https://worker.stage.myviewboard.cloud/", "DCC", "DCC")
+        time.sleep(2)
         while isNextPage:
             pageList = []
             for i in range(len(self.test.wf.element.GetAllTasks)):
@@ -88,31 +89,38 @@ class StartFileConversion:
                 isNextPage = False
                 self.test.finish_task()
 
+
 class TestApporveFileConversion:
     def __init__(self):
         self.wf = Web_Flow()
-        self.wbf = Whiteboard_Flow()   
-
 class ApproveFileConversion:
     def __init__(self, totalPage):
         self.test = TestApporveFileConversion()
-        self.start = StartFileConversion()
-        self.totalPage = totalPage
         self.current_page = 1
+        self.totalpage = totalPage
+        print(self.totalpage)
         self.test_2()
+    def finish_task(self):        
+        self.test.wf.finish_close_web()
     def test_2(self):
         isNextPage = True
         self.test.wf.enter_webpage("https://worker.stage.myviewboard.cloud/", "admin", "12345")
         while isNextPage:
-            if self.current_page > self.totalPage:
+            if self.current_page < self.totalpage:
+                self.test.wf.element.GetAllTasks
+                for i in range(len(self.test.wf.element.GetAllTasks)):
+                    self.test.wf.newfilesname(taskIndex=i)
+                    if self.test.wf.element.States(i) == "Review":
+                        self.test.wf.approve_icon(i)
+                self.test.wf.turn_page()
+                self.current_page += 1
+            else:
                 break
-            for i in range(len(self.test.wf.element.GetAllTasks)):
-                if self.test.wf.element.States(i) == "Review":
-                    self.test.wf.wc.element_click(self.test.wf.element.SendBtn(i))
-            self.test.wf.turn_page()
-            self.current_page += 1
+        self.finish_task()
+
             
-            
+
 a = StartFileConversion()
 a.test_()
-ApproveFileConversion(totalPage= a.currentPage)
+ApproveFileConversion(totalPage=a.currentPage)
+

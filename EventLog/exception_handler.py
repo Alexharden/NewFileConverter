@@ -1,9 +1,9 @@
-import logging
-import traceback
-import os
+import logging  #記錄訊息和異常
+import traceback  #獲取異常的追蹤訊息
+import os #處理檔案路徑
 
 class ExceptionHandler: #異常處理
-    def __init__(self, msg: str, exceptionLevel: str):
+    def __init__(self, msg: str, exceptionLevel: str): #初始化  
         self.msg = msg
         self.exceptionLevel = exceptionLevel
         self.FORMAT = '\n%(asctime)s %(levelname)s: %(message)s' #格式化字串
@@ -12,8 +12,8 @@ class ExceptionHandler: #異常處理
         logging.basicConfig(level=self.level, format=self.FORMAT, datefmt= self.DATE_FORMAT, filemode="a+", encoding= "utf-8", filename= os.path.abspath("EventLog/Exception.log")) #將錯誤寫進
         self.record_logs()
         print(msg)
-        
-    def level_recognizer(self):  #設定問題等級
+         
+    def level_recognizer(self):  # 方法 設定問題等級 
         if self.exceptionLevel.lower() == "debug": #診斷問題
             self.level = logging.DEBUG
         elif self.exceptionLevel.lower() == "info": #程式正常進行
@@ -25,9 +25,9 @@ class ExceptionHandler: #異常處理
         elif self.exceptionLevel.lower() == "critical": #嚴重錯誤 程式無法執行
             self.level = logging.CRITICAL
             
-    def record_logs(self): #記錄問題
+    def record_logs(self): # 實作 記錄問題
         if self.exceptionLevel.lower() == "debug":
-            logging.debug(self.msg, exc_info= True)
+            logging.debug(self.msg, exc_info= True) #True 列出因果關係
         elif self.exceptionLevel.lower() == "info":
             logging.info(self.msg, exc_info= True)
         elif self.exceptionLevel.lower() == "warning":

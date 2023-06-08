@@ -25,7 +25,19 @@ class GetFiles: #開啟.txt檔案
             for i in range(len(files)): #迴圈 讀取完一行就換行
                 files[i] = files[i].replace("\n", "") #
                 allfile.append(files[i])
+        print("開啟並讀取到失敗的檔案")
         return allfile
+
+# class GetFiles: #開啟.txt檔案
+#     def __init__(self, path): #開啟一個檔案(這邊是只存放失敗的txt檔案)
+#         self.Files = self.get_files(path)
+#     def get_files(self, path):
+#         with open (path, "r", encoding= "utf-8") as f: #開啟失敗的txt檔案
+#             allfile = [] #存放讀取到的失敗的檔案名稱
+#             for i in f: #迴圈 讀取完一行就換行
+#                 allfile.append(i.replace("\n", "")) #
+#         print("成功讀取到失敗的檔案了")
+#         return allfile
 
 class Web_Flow: #整個網頁的流程
     def __init__(self):
@@ -40,17 +52,22 @@ class Web_Flow: #整個網頁的流程
         self.wc.element_send_keys(self.element.AccField, acc)
         self.wc.element_send_keys(self.element.PwdField, pwd)
         self.wc.element_click(self.element.LoginBtn)
-    def download_file(self, taskIndex): #下載檔案
-        self.wc.maximize_window() #放大視窗
+        time.sleep(1)
+    def newfilesname(self,taskIndex):
+        time.sleep(2)
         self.createTime = self.element.CreateTime(taskIndex) #儲存要下載的檔案時間
         self.fileName = self.element.FileName(taskIndex) #儲存要下載的檔案名稱
+    def download_file(self, taskIndex): #下載檔案
+        self.wc.maximize_window() #放大視窗
         if self.createTime+self.fileName in self.failFiles:  #如果檔案時間+檔案名稱出現在失敗的txt中
             ExceptionHandler(msg= f"{self.createTime+self.fileName} is failed file.", exceptionLevel= "info")
             raise
         else:
             if self.element.States(taskIndex) == "Progress" or self.element.States(taskIndex) == "New": #狀態如果是這兩個 就會往下執行動作
                 self.wc.element_click(self.element.downloadLink(taskIndex)) #點擊下載
+                ExceptionHandler(msg= f"{self.createTime+self.fileName} 點擊檔案下載", exceptionLevel= "info")
                 self.fc.file_wait("./Download_File/", get_extension(self.fileName)) #等待檔案下載完成
+                ExceptionHandler(msg= f"{self.createTime+self.fileName} 檔案下載完成了", exceptionLevel= "info")
                 self.wc.minimize_window() #縮小視窗
             else:
                 ExceptionHandler(msg=f"{self.createTime+self.fileName} is 'Review' Task", exceptionLevel= "info")#這邊只是判斷如果檔案是Review 寫進去log較好判斷
@@ -63,11 +80,21 @@ class Web_Flow: #整個網頁的流程
     def turn_page(self): #點擊下一頁
         self.wc.element_click(self.element.nextPageBtn)
         time.sleep(3)
-    def add_error_file(self): #錯誤檔案的建立時間+檔案名稱 寫入失敗的txt
+        ExceptionHandler(msg= "點擊下一頁", exceptionLevel= "info")
+    def add_error_file(self): #錯誤檔案的建立時間+檔案名稱寫入失敗的txt
         self.fc.add_failed_file(self.createTime+self.fileName)
+        ExceptionHandler(msg= f"{self.createTime+self.fileName} 此檔案有問題，寫入失敗的txt", exceptionLevel= "info")
     def finish_close_web(self):
-        self.wc.close_webpage() #轉檔上傳結束 關閉網頁
-        ExceptionHandler(msg= "轉檔上傳流程結束", exceptionLevel= "info")
+        self.wc.close_webpage() #關閉網頁
+        ExceptionHandler(msg= "關閉網頁", exceptionLevel= "info")
+    def approve_icon(self,btn): #批准
+        try:
+            self.wc.element_click(self.element.SendBtn(btn))
+            time.sleep(2)
+            ExceptionHandler(msg= f"{self.createTime+self.fileName} 批准此檔案 ", exceptionLevel= "info")
+        except:
+            ExceptionHandler(msg= f"{self.createTime+self.fileName} 無法批准此檔案 ", exceptionLevel= "critical")
+            raise
 
 class Whiteboard_Flow: #白板的流程
     def __init__(self):
@@ -75,6 +102,7 @@ class Whiteboard_Flow: #白板的流程
         self.fc = FileControl() #呼叫刪除檔案 創建資料夾 等待檔案下載
     def launch_MVBW(self):
         self.ap.launch_app(r"C:\Program Files\ViewSonic\vBoard\vBoard.exe") #開啟白板
+        ExceptionHandler(msg= "開啟白板", exceptionLevel= "info")
     def open_magicbox(self):
         try: #True 是東西出現 False 是東西消失
             self.ap.icon_wait(magic_box, True)
@@ -125,8 +153,14 @@ class Whiteboard_Flow: #白板的流程
             
     def select_all_page(self):
         try:
-            self.ap.icon_wait(magic_tool, False)
-            self.ap.icon_wait(select_allpage, True)
+            startTime = time.time()
+            while time.time() - startTime < 120:
+                if self.ap.is_icon_get(select_allpage):
+                    break
+                elif self.ap.is_icon_get(error_message):
+                    raise
+                elif time.time() - startTime >= 120:
+                    raise
             self.ap.icon_click(select_allpage)
             ExceptionHandler(msg= "有點到所有頁面按鍵", exceptionLevel="info")
         except:
@@ -225,7 +259,7 @@ class Whiteboard_Flow: #白板的流程
         try:
             self.ap.icon_wait(rename_olf_file, True)
             self.ap.icon_click(rename_olf_file)
-            self.ap.type_write("converted")
+            self.ap.type_write("converted") #預設儲存轉檔完的名稱
             ExceptionHandler(msg= "儲存流程 有點到輸入檔名欄位", exceptionLevel="info")
         except:
             ExceptionHandler(msg= "找不到輸入檔名欄位，無法點擊", exceptionLevel= "critical")

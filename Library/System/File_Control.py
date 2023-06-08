@@ -6,7 +6,7 @@ class FileControl: #下載存檔檔案相關的
         if not os.path.isdir(folderName):
             os.mkdir(folderName)
 
-    def delete_all_files(self, path): #刪除資料價
+    def delete_all_files(self, path): #刪除資料
         for i in range(len(os.listdir(path))):
             os.remove(os.path.join(os.path.abspath(path)+"\\"+os.listdir(path)[i]))
             
