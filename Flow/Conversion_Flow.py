@@ -155,11 +155,11 @@ class Whiteboard_Flow: #白板的流程
         try:
             startTime = time.time()
             while time.time() - startTime < 120:
-                if self.ap.is_icon_get(select_allpage):
+                if self.ap.is_icon_get(select_allpage): #120秒內抓到這張圖片出現 結束while 做點及
                     break
-                elif self.ap.is_icon_get(error_message):
+                elif self.ap.is_icon_get(error_message):  #如果遇到這張圖片去異常處理
                     raise
-                elif time.time() - startTime >= 120:
+                elif time.time() - startTime >= 120: #超過120米都沒發現圖片 去異常處理
                     raise
             self.ap.icon_click(select_allpage)
             ExceptionHandler(msg= "有點到所有頁面按鍵", exceptionLevel="info")

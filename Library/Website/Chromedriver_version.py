@@ -1,8 +1,9 @@
 import requests
 from bs4 import BeautifulSoup
 from win32com.client import Dispatch
+import xml.etree.ElementTree as ET
 
-class DownloadFitChromeDrive: #下載正確版本的driver
+class DownloadFitChromeDrive:
     def __init__(self):
         self.get_chrome_version()
         self.climb_chromedriver_version()
@@ -20,16 +21,21 @@ class DownloadFitChromeDrive: #下載正確版本的driver
                 self.versionList.append(i.text)
         tmp = tmp.fromkeys(self.versionList)
         self.versionList = list(tmp.keys())
+        self.finalList = []
+        for i in range(len(self.versionList)):
+            if "ChromeDriver" in self.versionList[i]:
+                self.finalList.append(self.versionList[i].replace("ChromeDriver ", ""))
+        # print(self.finalList)
 
     def arrange_version_list(self): #整理並歸納爬下來的chromedriver版本，存出兩個串列，一是去掉最後一位的版號，另一是完整版號
         tmp = ""
         self.compareVersionList = []
-        for i in range(len(self.versionList)):
-            if "ChromeDriver " in self.versionList[i]:
-                self.versionList[i] = self.versionList[i].replace("ChromeDriver ", "")
-                tmp = self.versionList[i].split(".")
+        for i in range(len(self.finalList)):
+                tmp = self.finalList[i].split(".")
                 tmp.pop()
                 self.compareVersionList.append(".".join(tmp))
+        # print(self.compareVersionList)
+ 
     def get_version_via_com(self, filename): #從目標路徑取得該機器上的Chrome當前版本
         parser = Dispatch("Scripting.FileSystemObject")
         try:
@@ -45,9 +51,18 @@ class DownloadFitChromeDrive: #下載正確版本的driver
         tmp.pop()
         self.chromeVersion = ".".join(tmp)
         return self.chromeVersion
+    # def get_chrome_version(self):
+    #     tree = ET.parse(r"C:\Program Files (x86)\Google\Chrome\Application\chrome.VisualElementsManifest.xml")
+    #     root = tree.getroot()
+    #     self.chromeVersion = root.find('VisualElements').get('Square150x150Logo').split("\\")[0]
+    #     tmp = self.chromeVersion.split(".")
+    #     tmp.pop()
+    #     self.chromeVersion = ".".join(tmp)
+        # print("chrome version:", self.chromeVersion)
     
     def get_chromedriver_download_version(self): #把機器上去掉最後一位的版號與chromedriver去掉一位版號的串列作搜尋，抓出對應index，並取得完整版號
         if self.chromeVersion in self.compareVersionList:
-            downloadVersion = self.versionList[self.compareVersionList.index(self.chromeVersion)]
+            downloadVersion = self.finalList[self.compareVersionList.index(self.chromeVersion)]
             return downloadVersion
+
 

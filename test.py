@@ -1,5 +1,6 @@
 from Flow.Conversion_Flow import Web_Flow
 from Flow.Conversion_Flow import Whiteboard_Flow
+from Flow.Conversion_Flow import GetFiles
 import time, threading
 
 
@@ -93,6 +94,8 @@ class StartFileConversion:
 class TestApporveFileConversion:
     def __init__(self):
         self.wf = Web_Flow()
+        self.failFiles = GetFiles("./Failed_File/failed_files.txt").Files
+        
 class ApproveFileConversion:
     def __init__(self, totalPage):
         self.test = TestApporveFileConversion()
@@ -111,7 +114,12 @@ class ApproveFileConversion:
                 for i in range(len(self.test.wf.element.GetAllTasks)):
                     self.test.wf.newfilesname(taskIndex=i)
                     if self.test.wf.element.States(i) == "Review":
-                        self.test.wf.approve_icon(i)
+                        if self.test.wf.createTime+self.test.wf.fileName in self.test.failFiles:
+                            self.test.wf.approve_icon(i)
+                        else:
+                            print("這個檔案在失敗的列表中")
+                    else:
+                        print(f"這個檔案狀態是 {self.test.wf.element.States(i)} ")
                 self.test.wf.turn_page()
                 self.current_page += 1
             else:
