@@ -7,8 +7,12 @@ class FileControl: #下載存檔檔案相關的
             os.mkdir(folderName)
 
     def delete_all_files(self, path): #刪除資料
-        for i in range(len(os.listdir(path))):
-            os.remove(os.path.join(os.path.abspath(path)+"\\"+os.listdir(path)[i]))
+        try:
+            while len(os.listdir(path)) != 0:
+                for i in range(len(os.listdir(path))):
+                    os.remove(os.path.join(os.path.abspath(path)+"\\"+os.listdir(path)[i]))
+        except:
+            print("此資料夾為空")
             
     def file_wait(self, path, extension): #等待檔案下載
         start_time = time.time()

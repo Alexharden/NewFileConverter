@@ -1,4 +1,4 @@
-import os, time, psutil
+import os, time, psutil, subprocess
 import pyautogui, pyperclip
 from EventLog.exception_handler import ExceptionHandler
 
@@ -95,26 +95,45 @@ class AppControl: #白板上的操作
     def launch_app(self, path):
         os.popen(path)
         try:
-            self.icon_wait(m_login, True) #判斷w開啟了沒
+            self.icon_wait(m_login, True) #判斷w開啟了沒 用圖片判斷
             ExceptionHandler(msg= f"{path}已成功開啟.", exceptionLevel= "info")
         except:
             ExceptionHandler(msg= f"{path}開啟失敗", exceptionLevel= "critical")
        
     def close_app(self, appName):
-        def get_processing():
-            pids = psutil.pids()
+        # def get_processing(): #獲取正在運行的程式
+        #     pids = psutil.pids() #獲取所有正在運行的
+        #     process = []
+        #     for pid in pids:
+        #         process.append(psutil.Process(pid).name()) #將名稱
+        #     return process   
+        # try:
+        #     while appName in get_processing(): #強制終止
+        #         os.system(f"TASKKILL /F /IM {appName} /T")
+        #         ExceptionHandler(msg = f"{appName}還未關閉", exceptionLevel= "info")
+        #     else:
+        #         ExceptionHandler(msg = f"找不到{appName}", exceptionLevel= "info")
+        # except:
+        #     ExceptionHandler(msg = f"{appName}已關閉", exceptionLevel= "info")
+        def get_processing(): #獲取正在運行的程式
+            pids = psutil.pids() #獲取所有正在運行的
             process = []
             for pid in pids:
-                process.append(psutil.Process(pid).name())
+                process.append(psutil.Process(pid).name()) #將名稱
             return process   
         try:
-            while appName in get_processing(): #強制終止
-                os.system(f"TASKKILL /F /IM {appName} /T")
-                ExceptionHandler(msg = f"{appName}還未關閉", exceptionLevel= "info")
-            else:
-                ExceptionHandler(msg = f"找不到{appName}", exceptionLevel= "info")
+            while True:
+                appList = get_processing()
+                if appName in appList: #強制終止
+                    os.system(f"TASKKILL /F /IM {appName} /T")
+                    ExceptionHandler(msg = f"{appName}還未關閉", exceptionLevel= "info")
+                    time.sleep(1)
+                else:
+                    ExceptionHandler(msg = f"找不到{appName}", exceptionLevel= "info")
+                    break
         except:
             ExceptionHandler(msg = f"{appName}已關閉", exceptionLevel= "info")
+     
 
     def type_write(self, content): #複製檔名貼上
         time.sleep(1)

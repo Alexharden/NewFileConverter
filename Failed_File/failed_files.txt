@@ -163,26 +163,5 @@
 2020-06-15 23:02:28Days 4 and 5 Piecewise Functions.notebook
 2020-05-04 03:53:16full recap expanding brackets.flipchart
 2019-07-25 16:45:01New Text Document.enb
-2023-06-15 17:01:50失敗的檔案.flipchart
-2023-06-15 17:01:56失敗的檔案.flipchart
-2023-06-15 17:01:39失敗的檔案.flipchart
-2023-06-15 17:01:28失敗的檔案.flipchart
-2023-06-15 16:59:58失敗的檔案.flipchart
-2023-06-15 16:59:15失敗的檔案.flipchart
-2023-06-15 16:58:33失敗的檔案.flipchart
-2023-06-15 17:00:44fail_1.4 Pushing on Air.notebook
-2023-06-15 17:01:04fail_clases2_11s1_2020.enb
-2023-06-15 17:00:34FAIL_New_DCs_PrometheanWhiteboard_20230504_130018.flipchart
-2023-06-15 17:00:33Fail_Poetry Review.flipchart
-2023-06-15 17:00:31Fail_Expanded Sentence.flipchart
-2023-06-15 17:00:28fail_20230517082328.enb
-2023-06-15 17:00:26fail_childrens book page layout ideas.flipchart
-2023-06-15 16:59:32FAIL_New_DCs_PrometheanWhiteboard_20230504_130018.flipchart
-2023-06-15 16:59:31Fail_Poetry Review.flipchart
-2023-06-15 16:59:08fail_1.4 Pushing on Air.notebook
-2023-06-15 16:58:48fail_childrens book page layout ideas.flipchart
-2023-06-21 16:07:50失敗的檔案.flipchart2023-06-05 10:35:34basics.notebook
-2023-06-05 10:35:3322-23 Math Lesson 6 Count on to Subtract.flipchart
-2023-06-05 10:35:29Financial-Algebra-Lesson-4-9-Accident-Investigation-Data.notebook
-2023-06-05 10:35:271.4-Pushing-on-Air.notebook
-2023-06-05 10:35:34basics.notebook
+
+2023-06-29 13:59:20test1234.flipchart

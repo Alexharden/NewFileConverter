@@ -72,15 +72,15 @@ class StartFileConversion:
                     self.test.start_web_download_flow(i)
                     self.test.start_app_import_flow()
                     self.test.start_app_save_flow()
-                    self.test.start_web_upload_flow(i)
-                    self.test.wf.fc.delete_all_files("./Download_File/")
-                    self.test.wf.fc.delete_all_files("./Convert_File/")
-                    raise
+                    self.test.start_web_upload_flow(i)  
                 except:
+                    pass
+                finally:
+                    self.test.wbf.finish_close_app()
                     self.test.wf.fc.delete_all_files("./Download_File/")
                     self.test.wf.fc.delete_all_files("./Convert_File/")
-                    self.test.wbf.finish_close_app()
                     continue
+                    
             for i in range(len(self.test.wf.element.pages)):
                 pageList.append(self.test.wf.element.pages[i].text)
             if str(self.currentPage + 1) in pageList:
@@ -88,8 +88,7 @@ class StartFileConversion:
                 self.test.wf.turn_page()
             else:
                 isNextPage = False
-                self.test.finish_task()
-
+ 
 
 class TestApporveFileConversion:
     def __init__(self):
@@ -114,7 +113,7 @@ class ApproveFileConversion:
                 for i in range(len(self.test.wf.element.GetAllTasks)):
                     self.test.wf.newfilesname(taskIndex=i)
                     if self.test.wf.element.States(i) == "Review":
-                        if self.test.wf.createTime+self.test.wf.fileName in self.test.failFiles:
+                        if self.test.wf.createTime+self.test.wf.fileName not in self.test.failFiles:
                             self.test.wf.approve_icon(i)
                         else:
                             print("這個檔案在失敗的列表中")
@@ -128,7 +127,7 @@ class ApproveFileConversion:
 
             
 
-a = StartFileConversion()
-a.test_()
-ApproveFileConversion(totalPage=a.currentPage)
+# a = StartFileConversion()
+# a.test_()
+# ApproveFileConversion(totalPage=a.currentPage)
 
